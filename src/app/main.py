@@ -8,9 +8,9 @@ metadata.create_all(engine)
 app = FastAPI()
 
 
-@app.route("/")
-def read_root():
-    return "Fast API"
+@app.get("/")
+async def read_root():
+    return {"Hello": "World"}
 
 
 @app.on_event("startup")
