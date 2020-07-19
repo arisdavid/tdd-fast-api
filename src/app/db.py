@@ -1,4 +1,7 @@
+import json
+
 from databases import Database
+from decouple import config
 from sqlalchemy import (
     Column,
     DateTime,
@@ -9,12 +12,17 @@ from sqlalchemy import (
     create_engine,
 )
 from sqlalchemy.sql import func
+from src.aws_helper.aws_secrets import get_secret
 
-DATABASE_URL = "sqlite:////test.db"  # os.getenv("DATABASE_URL")
+account = json.loads(get_secret())
 
-# SQLAlchemy
+DATABASE_URL = (
+    f"postgresql://{account['username']}:{account['password']}"
+    f"@{account['host']}:{account['port']}/{config('DB_NAME')}"
+)
+
 engine = create_engine(DATABASE_URL)
-metadata = MetaData()
+metadata = MetaData(schema=config("SCHEMA"))
 
 notes = Table(
     "notes",
